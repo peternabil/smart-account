@@ -13,6 +13,11 @@ func init() {
 
 func main() {
 	r := gin.Default()
+
+	r.POST("/signup", controllers.SignUp)
+	r.GET("/users", controllers.UserIndex)
+	r.GET("/users/:id", controllers.UserFind)
+
 	r.GET("/transaction", controllers.TransactionIndex)
 	r.GET("/transaction/:id", controllers.TransactionFind)
 	r.POST("/transaction", controllers.TransactionCreate)

@@ -54,7 +54,7 @@ func TransactionCreate(c *gin.Context) {
 		c.Status(400)
 		return
 	}
-	transaction := models.Transaction{Title: body.Title, Category: cat, Priority: prio, Amount: body.Amount, Negative: body.Negative, Description: body.Description}
+	transaction := models.Transaction{Title: body.Title, CategoryID: cat.ID, PriorityID: prio.ID, Amount: body.Amount, Negative: body.Negative, Description: body.Description}
 	result := intitializers.DB.Create(&transaction)
 	if result.Error != nil {
 		c.Status(400)
@@ -95,8 +95,8 @@ func TransactionEdit(c *gin.Context) {
 		return
 	}
 	transaction.Title = body.Title
-	transaction.Category = cat
-	transaction.Priority = prio
+	transaction.CategoryID = cat.ID
+	transaction.PriorityID = prio.ID
 	transaction.Amount = body.Amount
 	transaction.Negative = body.Negative
 	transaction.Description = body.Description
