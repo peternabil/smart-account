@@ -1,10 +1,16 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
+	"os"
+	"time"
 
+	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/gin-gonic/gin"
+	"github.com/go-passwd/validator"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/intitializers"
 	"github.com/peternabil/go-api/models"
@@ -25,10 +31,14 @@ func UserIndex(c *gin.Context) {
 
 func UserFind(c *gin.Context) {
 	uId := c.Param("id")
-	user := models.User{UID: uuid.MustParse(uId)}
-	res := intitializers.DB.First(&user)
-	if res.Error != nil {
-		c.Status(404)
+	ussId, uuidErr := uuid.Parse(uId)
+	if uuidErr != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "invalid uuid"})
+		return
+	}
+	user := models.User{}
+	if res := intitializers.DB.Where("uid = ?", ussId).First(&user).Error; res != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
 	c.JSON(200, gin.H{
@@ -38,12 +48,30 @@ func UserFind(c *gin.Context) {
 
 func SignUp(c *gin.Context) {
 	var body struct {
-		Email    string
-		Password string
+		Email     string
+		FirstName string
+		LastName  string
+		Password  string
 	}
 	reqErr := c.BindJSON(&body)
 	if reqErr != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": reqErr.Error()})
+		return
+	}
+	passwordValid := validator.New(validator.MinLength(6, errors.New("password must be at least 6 chars")), validator.MaxLength(30, errors.New("password must be at most 30 chars")), validator.CommonPassword(errors.New("password cannot be commonly used password")), validator.ContainsAtLeast("abcdefghijklmnopqrstuvwxyz", 5, errors.New("password must contain at least 5 chars")), validator.ContainsAtLeast("_@.()@$#", 1, errors.New("password must contain at least 1 special char _@.()@$#")))
+	err := passwordValid.Validate(body.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	verifier := emailverifier.NewVerifier()
+	ret, err := verifier.Verify(body.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if !ret.Syntax.Valid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid email syntax"})
 		return
 	}
 	encryptedPass, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
@@ -52,13 +80,61 @@ func SignUp(c *gin.Context) {
 		return
 	}
 	fmt.Println(encryptedPass)
-	user := models.User{Email: body.Email, Password: string(encryptedPass)}
+	user := models.User{Email: body.Email, Password: string(encryptedPass), FirstName: body.FirstName, LastName: body.LastName}
 	result := intitializers.DB.Create(&user)
 	if result.Error != nil {
-		c.Status(400)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 	c.JSON(200, gin.H{
 		"user": user,
 	})
+}
+
+func Login(c *gin.Context) {
+	var body struct {
+		Email    string
+		Password string
+	}
+	reqErr := c.BindJSON(&body)
+	fmt.Println(body)
+	if reqErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": reqErr.Error()})
+		return
+	}
+	user := models.User{Email: body.Email}
+	fmt.Println(user)
+	if usError := intitializers.DB.Where("email = ?", body.Email).First(&user).Error; usError != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no user with this email"})
+		return
+	}
+	fmt.Println(user)
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	token, tokErr := CreateJWTToken(user)
+	if tokErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": tokErr.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"token": token})
+}
+
+func CreateJWTToken(user models.User) (string, error) {
+	sampleSecretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
+	claims := &models.Claims{
+		Email: user.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(sampleSecretKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

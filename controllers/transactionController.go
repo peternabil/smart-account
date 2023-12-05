@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/intitializers"
@@ -9,9 +11,9 @@ import (
 
 func TransactionIndex(c *gin.Context) {
 	transactions := []models.Transaction{}
-	result := intitializers.DB.Find(&transactions)
-	if result.Error != nil {
-		c.Status(400)
+	user := c.MustGet("user").(models.User)
+	if result := intitializers.DB.Where("user_id = ?", user.ID).Find(&transactions).Error; result != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no transactions for this user"})
 		return
 	}
 	c.JSON(200, gin.H{
@@ -21,10 +23,14 @@ func TransactionIndex(c *gin.Context) {
 
 func TransactionFind(c *gin.Context) {
 	tId := c.Param("id")
-	transaction := models.Transaction{ID: uuid.MustParse(tId)}
-	res := intitializers.DB.First(&transaction)
-	if res.Error != nil {
-		c.Status(404)
+	utId, uuidErr := uuid.Parse(tId)
+	if uuidErr != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "invalid uuid"})
+		return
+	}
+	transaction := models.Transaction{}
+	if res := intitializers.DB.Where("uid = ?", utId).First(&transaction).Error; res != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "transaction not found"})
 		return
 	}
 	c.JSON(200, gin.H{

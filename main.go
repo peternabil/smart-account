@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/peternabil/go-api/controllers"
 	"github.com/peternabil/go-api/intitializers"
+	"github.com/peternabil/go-api/middleware"
 )
 
 func init() {
@@ -14,27 +15,35 @@ func init() {
 func main() {
 	r := gin.Default()
 
-	r.POST("/signup", controllers.SignUp)
-	r.GET("/users", controllers.UserIndex)
-	r.GET("/users/:id", controllers.UserFind)
+	// auth not required
+	nonAuth := r.Group("/")
 
-	r.GET("/transaction", controllers.TransactionIndex)
-	r.GET("/transaction/:id", controllers.TransactionFind)
-	r.POST("/transaction", controllers.TransactionCreate)
-	r.PUT("/transaction/:id", controllers.TransactionEdit)
-	r.DELETE("/transaction/:id", controllers.TransactionDelete)
+	nonAuth.POST("/signup", controllers.SignUp)
+	nonAuth.POST("/login", controllers.Login)
 
-	r.GET("/category", controllers.CategoryIndex)
-	r.GET("/category/:id", controllers.CategoryFind)
-	r.POST("/category", controllers.CategoryCreate)
-	r.PUT("/category/:id", controllers.CategoryEdit)
-	r.DELETE("/category", controllers.CategoryDelete)
+	// auth required
+	auth := r.Group("/api", middleware.Auth())
 
-	r.GET("/priority", controllers.PriorityIndex)
-	r.GET("/priority/:id", controllers.PriorityFind)
-	r.POST("/priority", controllers.PriorityCreate)
-	r.PUT("/priority/:id", controllers.PriorityEdit)
-	r.DELETE("/priority/:id", controllers.PriorityDelete)
+	auth.GET("/users", controllers.UserIndex)
+	auth.GET("/users/:id", controllers.UserFind)
+
+	auth.GET("/transaction", controllers.TransactionIndex)
+	auth.GET("/transaction/:id", controllers.TransactionFind)
+	auth.POST("/transaction", controllers.TransactionCreate)
+	auth.PUT("/transaction/:id", controllers.TransactionEdit)
+	auth.DELETE("/transaction/:id", controllers.TransactionDelete)
+
+	auth.GET("/category", controllers.CategoryIndex)
+	auth.GET("/category/:id", controllers.CategoryFind)
+	auth.POST("/category", controllers.CategoryCreate)
+	auth.PUT("/category/:id", controllers.CategoryEdit)
+	auth.DELETE("/category", controllers.CategoryDelete)
+
+	auth.GET("/priority", controllers.PriorityIndex)
+	auth.GET("/priority/:id", controllers.PriorityFind)
+	auth.POST("/priority", controllers.PriorityCreate)
+	auth.PUT("/priority/:id", controllers.PriorityEdit)
+	auth.DELETE("/priority/:id", controllers.PriorityDelete)
 
 	r.Run() // listen and serve on 0.0.0.0:8080
 }
