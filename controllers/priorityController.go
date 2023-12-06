@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/intitializers"
@@ -9,9 +11,9 @@ import (
 
 func PriorityIndex(c *gin.Context) {
 	priorities := []models.Priority{}
-	result := intitializers.DB.Find(&priorities)
-	if result.Error != nil {
-		c.Status(400)
+	user := c.MustGet("user").(models.User)
+	if result := intitializers.DB.Where("user_id = ?", user.UID).Find(&priorities).Error; result != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no priorities for this user"})
 		return
 	}
 	c.JSON(200, gin.H{
@@ -36,9 +38,11 @@ func PriorityCreate(c *gin.Context) {
 	var body struct {
 		Name        string
 		Description string
+		Level       int
 	}
+	user := c.MustGet("user").(models.User)
 	c.BindJSON(&body)
-	priority := models.Priority{Name: body.Name, Description: body.Description}
+	priority := models.Priority{Name: body.Name, Description: body.Description, UserID: user.UID, Level: body.Level}
 	result := intitializers.DB.Create(&priority)
 	if result.Error != nil {
 		c.Status(400)
@@ -53,10 +57,11 @@ func PriorityEdit(c *gin.Context) {
 	var body struct {
 		Name        string
 		Description string
+		Level       int
 	}
 	pId := c.Param("id")
 	c.BindJSON(&body)
-	prio := models.Category{ID: uuid.MustParse(pId)}
+	prio := models.Priority{ID: uuid.MustParse(pId)}
 	res := intitializers.DB.Find(&prio)
 	if res.Error != nil {
 		c.Status(404)
@@ -64,6 +69,7 @@ func PriorityEdit(c *gin.Context) {
 	}
 	prio.Name = body.Name
 	prio.Description = body.Description
+	prio.Level = body.Level
 	intitializers.DB.Save(&prio)
 	c.JSON(200, gin.H{
 		"priority": prio,

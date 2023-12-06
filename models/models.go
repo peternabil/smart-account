@@ -20,6 +20,7 @@ type Category struct {
 	ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
 	Name        string
 	Description string
+	UserID      uuid.UUID
 }
 
 type Priority struct {
@@ -28,6 +29,7 @@ type Priority struct {
 	Name        string
 	Description string
 	Level       int
+	UserID      uuid.UUID
 }
 
 type Transaction struct {

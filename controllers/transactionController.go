@@ -12,7 +12,7 @@ import (
 func TransactionIndex(c *gin.Context) {
 	transactions := []models.Transaction{}
 	user := c.MustGet("user").(models.User)
-	if result := intitializers.DB.Where("user_id = ?", user.ID).Find(&transactions).Error; result != nil {
+	if result := intitializers.DB.Where("user_id = ?", user.UID).Find(&transactions).Error; result != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no transactions for this user"})
 		return
 	}
@@ -29,7 +29,7 @@ func TransactionFind(c *gin.Context) {
 		return
 	}
 	transaction := models.Transaction{}
-	if res := intitializers.DB.Where("uid = ?", utId).First(&transaction).Error; res != nil {
+	if res := intitializers.DB.Where("id = ?", utId).First(&transaction).Error; res != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "transaction not found"})
 		return
 	}
@@ -48,8 +48,9 @@ func TransactionCreate(c *gin.Context) {
 		Priority    string
 	}
 	c.BindJSON(&body)
+	user := c.MustGet("user").(models.User)
 	cat := models.Category{ID: uuid.MustParse(body.Category)}
-	prio := models.Priority{ID: uuid.MustParse(body.Category)}
+	prio := models.Priority{ID: uuid.MustParse(body.Priority)}
 	category := intitializers.DB.First(&cat)
 	if category.Error != nil {
 		c.Status(400)
@@ -60,7 +61,7 @@ func TransactionCreate(c *gin.Context) {
 		c.Status(400)
 		return
 	}
-	transaction := models.Transaction{Title: body.Title, CategoryID: cat.ID, PriorityID: prio.ID, Amount: body.Amount, Negative: body.Negative, Description: body.Description}
+	transaction := models.Transaction{Title: body.Title, CategoryID: cat.ID, PriorityID: prio.ID, Amount: body.Amount, Negative: body.Negative, Description: body.Description, UserID: user.UID}
 	result := intitializers.DB.Create(&transaction)
 	if result.Error != nil {
 		c.Status(400)
@@ -89,7 +90,7 @@ func TransactionEdit(c *gin.Context) {
 		return
 	}
 	cat := models.Category{ID: uuid.MustParse(body.Category)}
-	prio := models.Priority{ID: uuid.MustParse(body.Category)}
+	prio := models.Priority{ID: uuid.MustParse(body.Priority)}
 	category := intitializers.DB.First(&cat)
 	if category.Error != nil {
 		c.Status(400)

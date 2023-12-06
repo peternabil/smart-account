@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/intitializers"
@@ -8,10 +10,10 @@ import (
 )
 
 func CategoryIndex(c *gin.Context) {
-	categories := []models.Category{}
-	result := intitializers.DB.Find(&categories)
-	if result.Error != nil {
-		c.Status(400)
+	var categories []models.Category
+	user := c.MustGet("user").(models.User)
+	if result := intitializers.DB.Where("user_id = ?", user.UID).Find(&categories).Error; result != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no categories for this user"})
 		return
 	}
 	c.JSON(200, gin.H{
@@ -37,8 +39,9 @@ func CategoryCreate(c *gin.Context) {
 		Name        string
 		Description string
 	}
+	user := c.MustGet("user").(models.User)
 	c.BindJSON(&body)
-	category := models.Category{Name: body.Name, Description: body.Description}
+	category := models.Category{Name: body.Name, Description: body.Description, UserID: user.UID}
 	result := intitializers.DB.Create(&category)
 	if result.Error != nil {
 		c.Status(400)
