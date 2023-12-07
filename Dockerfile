@@ -8,6 +8,8 @@ COPY go.mod go.sum ./
 
 RUN go mod download && go mod verify
 
-RUN go install github.com/githubnemo/CompileDaemon@latest
+COPY . .
 
-CMD ["CompileDaemon", "-command=./app"]
+RUN go run migrate/migrate.go
+
+CMD ["go", "run", "."]
