@@ -5,14 +5,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/peternabil/go-api/intitializers"
 	"github.com/peternabil/go-api/models"
 )
 
-func CategoryIndex(c *gin.Context) {
-	var categories []models.Category
+func (server *Server) CategoryIndex(c *gin.Context) {
+	categories := []models.Category{}
 	user := c.MustGet("user").(models.User)
-	if result := intitializers.DB.Where("user_id = ?", user.UID).Find(&categories).Error; result != nil {
+	if result := server.store.GetCategories(user.UID, &categories); result != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no categories for this user"})
 		return
 	}
@@ -21,11 +20,11 @@ func CategoryIndex(c *gin.Context) {
 	})
 }
 
-func CategoryFind(c *gin.Context) {
+func (server *Server) CategoryFind(c *gin.Context) {
 	cId := c.Param("id")
 	category := models.Category{ID: uuid.MustParse(cId)}
-	res := intitializers.DB.First(&category)
-	if res.Error != nil {
+	res := server.store.GetCategory(category.ID, &category)
+	if res != nil {
 		c.Status(404)
 		return
 	}
@@ -34,7 +33,7 @@ func CategoryFind(c *gin.Context) {
 	})
 }
 
-func CategoryCreate(c *gin.Context) {
+func (server *Server) CategoryCreate(c *gin.Context) {
 	var body struct {
 		Name        string
 		Description string
@@ -42,8 +41,8 @@ func CategoryCreate(c *gin.Context) {
 	user := c.MustGet("user").(models.User)
 	c.BindJSON(&body)
 	category := models.Category{Name: body.Name, Description: body.Description, UserID: user.UID}
-	result := intitializers.DB.Create(&category)
-	if result.Error != nil {
+	result := server.store.CreateCategory(&category)
+	if result != nil {
 		c.Status(400)
 		return
 	}
@@ -52,7 +51,7 @@ func CategoryCreate(c *gin.Context) {
 	})
 }
 
-func CategoryEdit(c *gin.Context) {
+func (server *Server) CategoryEdit(c *gin.Context) {
 	var body struct {
 		Name        string
 		Description string
@@ -60,24 +59,24 @@ func CategoryEdit(c *gin.Context) {
 	catId := c.Param("id")
 	c.BindJSON(&body)
 	cat := models.Category{ID: uuid.MustParse(catId)}
-	res := intitializers.DB.Find(&cat)
-	if res.Error != nil {
+	res := server.store.GetCategory(cat.ID, &cat)
+	if res != nil {
 		c.Status(404)
 		return
 	}
 	cat.Name = body.Name
 	cat.Description = body.Description
-	intitializers.DB.Save(&cat)
+	server.store.EditCategory(&cat)
 	c.JSON(200, gin.H{
 		"category": cat,
 	})
 }
 
-func CategoryDelete(c *gin.Context) {
+func (server *Server) CategoryDelete(c *gin.Context) {
 	cId := c.Param("id")
 	category := models.Category{ID: uuid.MustParse(cId)}
-	res := intitializers.DB.Delete(&category)
-	if res.Error != nil {
+	res := server.store.DeleteCategory(&category)
+	if res != nil {
 		c.Status(400)
 		return
 	}

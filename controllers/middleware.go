@@ -1,4 +1,4 @@
-package middleware
+package controllers
 
 import (
 	"net/http"
@@ -7,11 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/peternabil/go-api/intitializers"
 	"github.com/peternabil/go-api/models"
 )
 
-func Auth() gin.HandlerFunc {
+func (server Server) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := models.User{}
 		if c.Request.Header.Get("Authorization") == "" {
@@ -38,14 +37,8 @@ func Auth() gin.HandlerFunc {
 		}
 		email := claims.Email
 		user.Email = email
-		if usError := intitializers.DB.Where("email = ?", email).First(&user).Error; usError != nil {
+		if usError := server.store.FindUser(email, &user); usError != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "no user with this email"})
-			c.Abort()
-			return
-		}
-		err = intitializers.DB.Find(&user).Error
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "you must be logged in to perform this request"})
 			c.Abort()
 			return
 		}

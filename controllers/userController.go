@@ -12,15 +12,14 @@ import (
 	"github.com/go-passwd/validator"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/peternabil/go-api/intitializers"
 	"github.com/peternabil/go-api/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func UserIndex(c *gin.Context) {
+func (server *Server) UserIndex(c *gin.Context) {
 	users := []models.User{}
-	result := intitializers.DB.Find(&users)
-	if result.Error != nil {
+	result := server.store.GetUsers(&users)
+	if result != nil {
 		c.Status(400)
 		return
 	}
@@ -29,7 +28,7 @@ func UserIndex(c *gin.Context) {
 	})
 }
 
-func UserFind(c *gin.Context) {
+func (server *Server) UserFind(c *gin.Context) {
 	uId := c.Param("id")
 	ussId, uuidErr := uuid.Parse(uId)
 	if uuidErr != nil {
@@ -37,7 +36,7 @@ func UserFind(c *gin.Context) {
 		return
 	}
 	user := models.User{}
-	if res := intitializers.DB.Where("uid = ?", ussId).First(&user).Error; res != nil {
+	if res := server.store.GetUser(ussId, &user); res != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
@@ -46,7 +45,7 @@ func UserFind(c *gin.Context) {
 	})
 }
 
-func SignUp(c *gin.Context) {
+func (server *Server) SignUp(c *gin.Context) {
 	var body struct {
 		Email     string
 		FirstName string
@@ -81,8 +80,8 @@ func SignUp(c *gin.Context) {
 	}
 	fmt.Println(encryptedPass)
 	user := models.User{Email: body.Email, Password: string(encryptedPass), FirstName: body.FirstName, LastName: body.LastName}
-	result := intitializers.DB.Create(&user)
-	if result.Error != nil {
+	result := server.store.SignUp(&user)
+	if result != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
@@ -91,7 +90,7 @@ func SignUp(c *gin.Context) {
 	})
 }
 
-func Login(c *gin.Context) {
+func (server *Server) Login(c *gin.Context) {
 	var body struct {
 		Email    string
 		Password string
@@ -104,7 +103,7 @@ func Login(c *gin.Context) {
 	}
 	user := models.User{Email: body.Email}
 	fmt.Println(user)
-	if usError := intitializers.DB.Where("email = ?", body.Email).First(&user).Error; usError != nil {
+	if usError := server.store.FindUser(body.Email, &user); usError != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no user with this email"})
 		return
 	}
