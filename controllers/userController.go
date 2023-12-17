@@ -118,7 +118,7 @@ func (server *Server) Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": tokErr.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"token": token})
+	c.JSON(200, gin.H{"token": token, "user": user})
 }
 
 func CreateJWTToken(user models.User) (string, error) {

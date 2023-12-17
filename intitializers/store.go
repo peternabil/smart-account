@@ -3,6 +3,7 @@ package intitializers
 import (
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/models"
+	"gorm.io/gorm/clause"
 )
 
 type MainStore struct {
@@ -19,10 +20,10 @@ func (s MainStore) DeleteTransaction(transaction *models.Transaction) error {
 	return DB.Delete(&transaction).Error
 }
 func (s MainStore) GetTransaction(id uuid.UUID, transaction *models.Transaction) error {
-	return DB.Where("id = ?", id).First(&transaction).Error
+	return DB.Preload(clause.Associations).Where("id = ?", id).First(&transaction).Error
 }
-func (s MainStore) GetTransactions(id uuid.UUID, transactions *[]models.Transaction) error {
-	return DB.Where("user_id = ?", id).Find(&transactions).Error
+func (s MainStore) GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int) error {
+	return DB.Preload(clause.Associations).Where("user_id = ?", id).Find(&transactions).Error
 }
 
 func (s MainStore) CreateCategory(category *models.Category) error {

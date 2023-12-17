@@ -37,6 +37,8 @@ type Transaction struct {
 	ID          uuid.UUID `gorm:"type:uuid;default:gen_random_uuid()"`
 	Title       string
 	CategoryID  uuid.UUID
+	Category    Category
+	Priority    Priority
 	Amount      int
 	Negative    bool
 	Description string

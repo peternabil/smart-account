@@ -40,7 +40,11 @@ func (server *Server) PriorityCreate(c *gin.Context) {
 		Level       int
 	}
 	user := c.MustGet("user").(models.User)
-	c.BindJSON(&body)
+	err := c.BindJSON(&body)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	priority := models.Priority{Name: body.Name, Description: body.Description, UserID: user.UID, Level: body.Level}
 	result := server.store.CreatePriority(&priority)
 	if result != nil {
@@ -59,7 +63,11 @@ func (server *Server) PriorityEdit(c *gin.Context) {
 		Level       int
 	}
 	pId := c.Param("id")
-	c.BindJSON(&body)
+	err := c.BindJSON(&body)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	prio := models.Priority{ID: uuid.MustParse(pId)}
 	res := server.store.GetPriority(prio.ID, &prio)
 	if res != nil {

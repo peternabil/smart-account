@@ -3,6 +3,7 @@ package controllers
 import (
 	"time"
 
+	"github.com/gin-contrib/cors"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/penglongli/gin-metrics/ginmetrics"
@@ -27,6 +28,7 @@ func (server *Server) NewRouter() {
 
 	r := gin.Default()
 
+	SetupCORS(r)
 	SetupLogger(r)
 	SetupMetrics(r)
 
@@ -69,6 +71,17 @@ func SetupLogger(router *gin.Engine) {
 	router.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 	router.Use(ginzap.RecoveryWithZap(logger, true))
 
+}
+
+func SetupCORS(router *gin.Engine) {
+	config := cors.DefaultConfig()
+	// config.AllowOrigins = []string{"http://google.com"}
+	// config.AllowOrigins = []string{"http://google.com", "http://facebook.com"}
+	config.AllowOrigins = []string{"*"}
+	// config.AllowAllOrigins = true
+
+	// router.Use(cors.New(config))
+	router.Use(CORSMiddleware())
 }
 
 func SetupMetrics(router *gin.Engine) {

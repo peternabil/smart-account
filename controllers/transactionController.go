@@ -11,7 +11,8 @@ import (
 func (server *Server) TransactionIndex(c *gin.Context) {
 	transactions := []models.Transaction{}
 	user := c.MustGet("user").(models.User)
-	if result := server.store.GetTransactions(user.UID, &transactions); result != nil {
+	page, pageSize := getPaginationArgs(c.Request)
+	if result := server.store.GetTransactions(user.UID, &transactions, page, pageSize); result != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no transactions for this user"})
 		return
 	}
@@ -46,24 +47,28 @@ func (server *Server) TransactionCreate(c *gin.Context) {
 		Description string
 		Priority    string
 	}
-	c.BindJSON(&body)
+	err := c.BindJSON(&body)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	user := c.MustGet("user").(models.User)
 	cat := models.Category{ID: uuid.MustParse(body.Category)}
 	prio := models.Priority{ID: uuid.MustParse(body.Priority)}
 	category := server.store.GetCategory(cat.ID, &cat)
 	if category != nil {
-		c.Status(400)
+		c.JSON(400, gin.H{"error": "category not found"})
 		return
 	}
 	priority := server.store.GetPriority(prio.ID, &prio)
 	if priority != nil {
-		c.Status(400)
+		c.JSON(400, gin.H{"error": "priority not found"})
 		return
 	}
 	transaction := models.Transaction{Title: body.Title, CategoryID: cat.ID, PriorityID: prio.ID, Amount: body.Amount, Negative: body.Negative, Description: body.Description, UserID: user.UID}
 	result := server.store.CreateTransaction(&transaction)
 	if result != nil {
-		c.Status(400)
+		c.JSON(500, gin.H{"error": "Could not create transaction"})
 		return
 	}
 	c.JSON(200, gin.H{
@@ -81,7 +86,11 @@ func (server *Server) TransactionEdit(c *gin.Context) {
 		Priority    string
 	}
 	tId := c.Param("id")
-	c.BindJSON(&body)
+	err := c.BindJSON(&body)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	transaction := models.Transaction{ID: uuid.MustParse(tId)}
 	res := server.store.GetTransaction(transaction.ID, &transaction)
 	if res != nil {

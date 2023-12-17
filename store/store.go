@@ -10,7 +10,7 @@ type Store interface {
 	EditTransaction(transaction *models.Transaction) error
 	DeleteTransaction(transaction *models.Transaction) error
 	GetTransaction(id uuid.UUID, transaction *models.Transaction) error
-	GetTransactions(id uuid.UUID, transactions *[]models.Transaction) error
+	GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int) error
 
 	CreateCategory(category *models.Category) error
 	EditCategory(category *models.Category) error

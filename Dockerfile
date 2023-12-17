@@ -1,15 +1,15 @@
-FROM golang:alpine
-
-WORKDIR /go/src/app
-
-ENV GOFLAGS="-buildvcs=false" 
-
-COPY go.mod go.sum ./
-
-RUN go mod download && go mod verify
-
+# Build stage
+FROM golang:1.20-alpine AS builder
+WORKDIR /app
 COPY . .
+COPY .env .
+RUN go build -o main main.go
 
-RUN go run migrate/migrate.go
 
-CMD ["go", "run", "."]
+FROM alpine:3.18
+WORKDIR /app
+COPY .env .
+COPY --from=builder /app/main .
+
+EXPOSE 8080
+CMD [ "/app/main" ]

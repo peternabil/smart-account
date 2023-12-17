@@ -39,7 +39,11 @@ func (server *Server) CategoryCreate(c *gin.Context) {
 		Description string
 	}
 	user := c.MustGet("user").(models.User)
-	c.BindJSON(&body)
+	err := c.BindJSON(&body)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	category := models.Category{Name: body.Name, Description: body.Description, UserID: user.UID}
 	result := server.store.CreateCategory(&category)
 	if result != nil {
@@ -57,7 +61,11 @@ func (server *Server) CategoryEdit(c *gin.Context) {
 		Description string
 	}
 	catId := c.Param("id")
-	c.BindJSON(&body)
+	err := c.BindJSON(&body)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	cat := models.Category{ID: uuid.MustParse(catId)}
 	res := server.store.GetCategory(cat.ID, &cat)
 	if res != nil {
