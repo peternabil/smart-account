@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -49,4 +51,12 @@ type Transaction struct {
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
+}
+
+type Spending struct {
+	Amount   int
+	Category Category
+	Priority Priority
+	datetime time.Time
+	Negative bool
 }

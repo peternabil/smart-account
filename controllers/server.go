@@ -59,6 +59,8 @@ func (server *Server) NewRouter() {
 	auth.PUT("/priority/:id", server.PriorityEdit)
 	auth.DELETE("/priority/:id", server.PriorityDelete)
 
+	auth.GET("/daily", server.GetDailyValues)
+
 	server.router = r
 }
 

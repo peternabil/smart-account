@@ -1,6 +1,8 @@
 package store
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/models"
 )
@@ -28,4 +30,9 @@ type Store interface {
 	GetUser(id uuid.UUID, user *models.User) error
 	GetUsers(users *[]models.User) error
 	FindUser(email string, user *models.User) error
+
+	GetTransactionsDateRange(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
+	// GetMonthlyTransactions(transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
+	// GetHighestSpendingCategory(transactions *models.Transaction, startDate, endDate time.Time, negative bool) error
+	// GetHighestSpendingSortedPriorities(transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
 }
