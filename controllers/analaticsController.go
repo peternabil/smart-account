@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -48,16 +49,8 @@ func (server *Server) GetDailyValues(c *gin.Context) {
 		return
 	}
 	user := c.MustGet("user").(models.User)
-	transactions := []models.Transaction{}
-	server.store.GetTransactionsDateRange(user.UID, &transactions, startDate, endDate, negative)
-	// var spending []models.Spending
-	// Amount   int
-	// Category Category
-	// Priority Priority
-	// datetime time.Time
-	// Negative bool
-	// for index, obj := range transactions {
-	// 	spending = append(spending, {Amount})
-	// }
-	c.JSON(200, gin.H{"transactions": transactions})
+	spendings := []models.Spending{}
+	server.store.GetTransactionsDateRangeGroupByDay(user.UID, &spendings, startDate, endDate, negative)
+	fmt.Println(spendings)
+	c.JSON(200, gin.H{"spending": spendings})
 }

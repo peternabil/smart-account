@@ -24,10 +24,11 @@ func (s MainStore) DeleteTransaction(transaction *models.Transaction) error {
 func (s MainStore) GetTransaction(id uuid.UUID, transaction *models.Transaction) error {
 	return DB.Preload(clause.Associations).Where("id = ?", id).First(&transaction).Error
 }
-func (s MainStore) GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int) error {
-	return DB.Preload(clause.Associations).Where("user_id = ?", id).Find(&transactions).Error
-}
+func (s MainStore) GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int, count *int64) error {
+	DB.Preload(clause.Associations).Where("user_id = ?", id).Find(&transactions).Count(count)
 
+	return DB.Preload(clause.Associations).Order("created_at desc").Limit(pageSize).Offset((page-1)*pageSize).Where("user_id = ?", id).Find(&transactions).Error
+}
 func (s MainStore) CreateCategory(category *models.Category) error {
 	return DB.Create(&category).Error
 }
@@ -74,6 +75,6 @@ func (s MainStore) FindUser(email string, user *models.User) error {
 	return DB.Where("email = ?", email).First(&user).Error
 }
 
-func (s MainStore) GetTransactionsDateRange(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error {
-	return DB.Preload(clause.Associations).Where("created_at BETWEEN ? AND ? AND negative = ? ", startDate, endDate, negative).Find(transactions).Error
+func (s MainStore) GetTransactionsDateRangeGroupByDay(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error {
+	return DB.Table("transactions").Select("date(created_at) as date, sum(amount) as total, negative as Negative").Where("user_id = ?", id).Group("date(created_at), negative").Having("date(created_at) BETWEEN ? AND ? AND negative = ?", startDate, endDate, negative).Scan(spendings).Error
 }

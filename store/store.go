@@ -12,7 +12,7 @@ type Store interface {
 	EditTransaction(transaction *models.Transaction) error
 	DeleteTransaction(transaction *models.Transaction) error
 	GetTransaction(id uuid.UUID, transaction *models.Transaction) error
-	GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int) error
+	GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int, count *int64) error
 
 	CreateCategory(category *models.Category) error
 	EditCategory(category *models.Category) error
@@ -31,8 +31,11 @@ type Store interface {
 	GetUsers(users *[]models.User) error
 	FindUser(email string, user *models.User) error
 
-	GetTransactionsDateRange(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
-	// GetMonthlyTransactions(transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
-	// GetHighestSpendingCategory(transactions *models.Transaction, startDate, endDate time.Time, negative bool) error
-	// GetHighestSpendingSortedPriorities(transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
+	GetTransactionsDateRangeGroupByDay(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error
+	// GetTransactionsDateRangeGroupByCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error
+	// GetTransactionsDateRangeGroupByPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error
+	// GetTransactionsDateRangeGroupByMonth(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error
+	// GetTransactionsDateRangeGroupByCategory(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
+	// GetTransactionsDateRangeGroupByPriority(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
+	// GetHighestTransaction(id uuid.UUID, transactions *models.Transaction, startDate, endDate time.Time, negative bool) error
 }

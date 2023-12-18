@@ -12,12 +12,17 @@ func (server *Server) TransactionIndex(c *gin.Context) {
 	transactions := []models.Transaction{}
 	user := c.MustGet("user").(models.User)
 	page, pageSize := getPaginationArgs(c.Request)
-	if result := server.store.GetTransactions(user.UID, &transactions, page, pageSize); result != nil {
+	var count int64
+	if result := server.store.GetTransactions(user.UID, &transactions, page, pageSize, &count); result != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no transactions for this user"})
 		return
 	}
 	c.JSON(200, gin.H{
 		"transactions": transactions,
+		"page":         page,
+		"page_size":    pageSize,
+		// "total_pages":,
+		"count": count,
 	})
 }
 

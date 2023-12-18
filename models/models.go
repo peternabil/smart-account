@@ -53,10 +53,24 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+type SpendingCategory struct {
+	Category   Category
+	CategoryID uuid.UUID
+	Date       time.Time
+	Total      int64
+	Negative   bool
+}
+
+type SpendingPriority struct {
+	Priority   Priority
+	PriorityID uuid.UUID
+	Date       time.Time
+	Total      int64
+	Negative   bool
+}
+
 type Spending struct {
-	Amount   int
-	Category Category
-	Priority Priority
-	datetime time.Time
+	Date     time.Time
+	Total    int64
 	Negative bool
 }
