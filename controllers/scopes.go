@@ -28,12 +28,12 @@ func getPaginationArgs(r *http.Request) (int, int) {
 func getDates(r *http.Request) (time.Time, time.Time, error, error) {
 	q := r.URL.Query()
 	startDatestr := q.Get("start_date")
-	startDate, sError := time.Parse("02-01-2006 15:04:05", startDatestr)
+	startDate, sError := time.Parse("2006-01-02T15:04:05Z", startDatestr)
 	if sError != nil {
 		return time.Now(), time.Now(), sError, nil
 	}
 	endDatestr := q.Get("end_date")
-	endDate, sError := time.Parse("02-01-2006 15:04:05", endDatestr)
+	endDate, sError := time.Parse("2006-01-02T15:04:05Z", endDatestr)
 	if sError != nil {
 		return time.Now(), time.Now(), sError, nil
 	}

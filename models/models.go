@@ -54,19 +54,20 @@ type Claims struct {
 }
 
 type SpendingCategory struct {
-	Category   Category
-	CategoryID uuid.UUID
+	Cname      string
 	Date       time.Time
 	Total      int64
 	Negative   bool
+	CategoryID uuid.UUID
 }
 
 type SpendingPriority struct {
-	Priority   Priority
+	Pname      string
 	PriorityID uuid.UUID
 	Date       time.Time
 	Total      int64
 	Negative   bool
+	Level      int
 }
 
 type Spending struct {

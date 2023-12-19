@@ -54,3 +54,38 @@ func (server *Server) GetDailyValues(c *gin.Context) {
 	fmt.Println(spendings)
 	c.JSON(200, gin.H{"spending": spendings})
 }
+
+func (server *Server) GetHighestCategory(c *gin.Context) {
+	var startDate time.Time
+	var endDate time.Time
+	var negative bool
+	err := setDates(c, &startDate, &endDate)
+	if err != nil {
+		return
+	}
+	err = setNegative(c, &negative)
+	if err != nil {
+		return
+	}
+	user := c.MustGet("user").(models.User)
+	spendings := []models.SpendingCategory{}
+	server.store.GetHighestSpendingCategory(user.UID, &spendings, startDate, endDate, negative)
+	c.JSON(200, gin.H{"spending": spendings})
+}
+func (server *Server) GetHighestPriority(c *gin.Context) {
+	var startDate time.Time
+	var endDate time.Time
+	var negative bool
+	err := setDates(c, &startDate, &endDate)
+	if err != nil {
+		return
+	}
+	err = setNegative(c, &negative)
+	if err != nil {
+		return
+	}
+	user := c.MustGet("user").(models.User)
+	spendings := []models.SpendingPriority{}
+	server.store.GetHighestSpendingPriority(user.UID, &spendings, startDate, endDate, negative)
+	c.JSON(200, gin.H{"spending": spendings})
+}

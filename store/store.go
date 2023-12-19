@@ -32,6 +32,8 @@ type Store interface {
 	FindUser(email string, user *models.User) error
 
 	GetTransactionsDateRangeGroupByDay(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error
+	GetHighestSpendingCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error
+	GetHighestSpendingPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error
 	// GetTransactionsDateRangeGroupByCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error
 	// GetTransactionsDateRangeGroupByPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error
 	// GetTransactionsDateRangeGroupByMonth(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error

@@ -76,5 +76,17 @@ func (s MainStore) FindUser(email string, user *models.User) error {
 }
 
 func (s MainStore) GetTransactionsDateRangeGroupByDay(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error {
-	return DB.Table("transactions").Select("date(created_at) as date, sum(amount) as total, negative as Negative").Where("user_id = ?", id).Group("date(created_at), negative").Having("date(created_at) BETWEEN ? AND ? AND negative = ?", startDate, endDate, negative).Scan(spendings).Error
+	return DB.Table("transactions").Select("date(created_at) as date, sum(amount) as total, negative as Negative").Where("user_id = ?", id).Group("date(created_at), negative").Having("date(created_at) BETWEEN ? AND ? AND negative = ?", startDate, endDate, negative).Order("date(created_at) ASC").Scan(spendings).Error
+}
+
+func (s MainStore) GetHighestSpendingCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error {
+	return DB.Preload(clause.Associations).Table("transactions t , categories c").Select("sum(amount) as total, category_id, c.name as CName").Where("t.user_id = ? AND t.created_at BETWEEN ? AND ? AND negative = ? AND c.id = category_id", id, startDate, endDate, negative).Group("category_id, c.name").Order("total desc").Scan(spendings).Error
+}
+
+func (s MainStore) GetHighestSpendingPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error {
+	return DB.Preload(clause.Associations).Table("transactions t , priorities p").Select("sum(amount) as total, priority_id, p.name as PName, p.level as Level").Where("t.user_id = ? AND t.created_at BETWEEN ? AND ? AND negative = ? AND p.id = priority_id", id, startDate, endDate, negative).Group("priority_id, p.name, p.level").Order("total desc").Scan(spendings).Error
+}
+
+func (s MainStore) TotalSpending(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error {
+	return DB.Preload(clause.Associations).Table("transactions t , priorities p").Select("sum(amount) as total, priority_id, p.name as PName, p.level as Level").Where("t.user_id = ? AND t.created_at BETWEEN ? AND ? AND negative = ? AND p.id = priority_id", id, startDate, endDate, negative).Group("priority_id, p.name, p.level").Order("total desc").Scan(spendings).Error
 }

@@ -60,6 +60,8 @@ func (server *Server) NewRouter() {
 	auth.DELETE("/priority/:id", server.PriorityDelete)
 
 	auth.GET("/daily", server.GetDailyValues)
+	auth.GET("/highest-cat", server.GetHighestCategory)
+	auth.GET("/highest-prio", server.GetHighestPriority)
 
 	server.router = r
 }
