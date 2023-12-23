@@ -62,18 +62,6 @@ services:
       - loki
     networks:
       - smart_wallet
-  # nginx:
-  #   image: nginx
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
-  #     - ./key.pem:/root/ssl/key.pem
-  #     - ./cert.pem:/root/ssl/cert.pem
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   depends_on:
-  #     - api
-  #     - grafana
 
 networks:
   smart_wallet:
