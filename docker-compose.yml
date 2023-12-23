@@ -14,8 +14,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - app
-    entrypoint: [ "/app/start.sh" ]
+      - smart_wallet
     command: [ "/app/main" ]
 
   postgres:
@@ -30,7 +29,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - app
+      - smart_wallet
 
   grafana:
     image: grafana/grafana:latest
@@ -39,11 +38,11 @@ services:
     volumes:
       - ./config/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
     environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      # - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=false
     networks:
-      - app
+      - smart_wallet
 
   loki:
     image: grafana/loki:latest
@@ -51,7 +50,7 @@ services:
       - 3100:3100
     command: -config.file=/etc/loki/local-config.yaml
     networks:
-      - app
+      - smart_wallet
 
   promtail:
     image: grafana/promtail:latest
@@ -64,10 +63,15 @@ services:
     depends_on:
       - loki
     networks:
-      - app
+      - smart_wallet
+  # app:
+  #   image: smart_account_app
+  #   container_name: smart_account_app
 
+  #   networks:
+  #     - smart_wallet
 networks:
-  app:
-    name: app
+  smart_wallet:
+    name: smart_wallet
 volumes:
   data-volume:
