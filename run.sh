@@ -5,4 +5,4 @@ openssl req -x509 -nodes -newkey rsa:2048 -keyout key.pem -out cert.pem -sha256 
 
 # docker build . -t my_app
 
-docker compose up
+docker compose up -d
