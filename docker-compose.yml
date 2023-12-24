@@ -73,6 +73,8 @@ services:
       - "443:443"
     depends_on:
       - api
+    networks:
+      - smart_wallet
 
 networks:
   smart_wallet:
