@@ -3,6 +3,8 @@ services:
     image: peternabil/smart_account_api:release
     ports:
       - "8080:8080"
+    expose:
+      - 8080
     environment:
       - DB_SOURCE=postgresql://root:root@postgres:6000/simple_calc?sslmode=disable
     labels:
