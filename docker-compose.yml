@@ -84,7 +84,7 @@ services:
     labels:
       logging: "promtail"
       logging_jobname: "containerlogs"
-     ports:
+    ports:
       - "3000:3000"
     environment:
       - REACT_APP_SERVER_URL=http://api:8080
