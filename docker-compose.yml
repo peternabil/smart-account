@@ -62,23 +62,23 @@ services:
     command: -config.file=/etc/promtail/docker-config.yaml
     depends_on:
       - loki
+    # networks:
+    #   - smart_wallet
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./key.pem:/root/ssl/key.pem
+      - ./cert.pem:/root/ssl/cert.pem
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    ports:
+      - "443:443"
+    depends_on:
+      - api
     networks:
       - smart_wallet
-  # nginx:
-  #   image: nginx
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf
-  #     - ./key.pem:/root/ssl/key.pem
-  #     - ./cert.pem:/root/ssl/cert.pem
-  #   labels:
-  #     logging: "promtail"
-  #     logging_jobname: "containerlogs"
-  #   ports:
-  #     - "443:443"
-  #   depends_on:
-  #     - api
-  #   networks:
-  #     - smart_wallet
 
 networks:
   smart_wallet:
