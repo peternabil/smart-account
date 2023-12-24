@@ -79,17 +79,6 @@ services:
     networks:
       - smart_wallet
 
-  app:
-    image: peternabil/smart_account_app:release
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
-    ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_SERVER_URL=http://api:8080
-    networks:
-      - smart_wallet
 networks:
   smart_wallet:
     name: smart_wallet
