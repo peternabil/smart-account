@@ -80,9 +80,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./key.pem:/etc/nginx/ssl/key.pem
       - ./cert.pem:/etc/nginx/ssl/cert.pem
-    labels:
-      logging: "promtail"
-      logging_jobname: "containerlogs"
     depends_on:
       - api
       - grafana
