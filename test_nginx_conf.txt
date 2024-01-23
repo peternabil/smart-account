@@ -58,3 +58,60 @@ upstream grafana {
 	
 
 }}
+
+
+
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name ec2-13-48-45-223.eu-north-1.compute.amazonaws.com;
+
+    ssl_certificate /etc/nginx/cert.pem;
+    ssl_certificate_key /etc/nginx/key.pem;
+
+    location /apis {
+        proxy_pass http://smart-account-api-1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        client_max_body_size 0;
+        proxy_read_timeout 36000s;
+        proxy_redirect off;
+    }
+
+    location /logs {
+        proxy_pass http://smart-account-grafana-1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        client_max_body_size 0;
+        proxy_read_timeout 36000s;
+        proxy_redirect off;
+    }
+
+}
+
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name ec2-13-48-45-223.eu-north-1.compute.amazonaws.com;
+
+    ssl_certificate /etc/nginx/cert.pem;
+    ssl_certificate_key /etc/nginx/key.pem;
+
+    location /apis {
+        proxy_pass http://api:8080;
+        # ... (rest of your configuration)
+    }
+
+    location /logs {
+        proxy_pass http://your-grafana-container-name:your-grafana-port;
+        # ... (rest of your configuration)
+    }
+
+    # Additional Nginx configuration if needed...
+}

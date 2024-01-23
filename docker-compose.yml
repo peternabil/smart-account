@@ -1,6 +1,7 @@
 services:
   api:
     image: peternabil/smart_account_api:release
+    container_name: api
     ports:
       - "8080:8080"
     expose:
@@ -33,6 +34,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - 3000:3000
     volumes:
