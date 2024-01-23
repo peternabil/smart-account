@@ -33,7 +33,7 @@ func (server *Server) NewRouter() {
 	SetupMetrics(r)
 
 	// auth not required
-	nonAuth := r.Group("/api")
+	nonAuth := r.Group("/smart-account/api")
 	nonAuth.POST("/auth/signup", server.SignUp)
 	nonAuth.POST("/auth/login", server.Login)
 	// auth required
