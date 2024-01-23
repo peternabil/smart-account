@@ -69,6 +69,7 @@ services:
       - loki
     networks:
       - smart_wallet
+
   nginx:
     image: nginx
     container_name: nginx
