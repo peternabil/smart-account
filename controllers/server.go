@@ -37,7 +37,7 @@ func (server *Server) NewRouter() {
 	nonAuth.POST("/auth/signup", server.SignUp)
 	nonAuth.POST("/auth/login", server.Login)
 	// auth required
-	auth := r.Group("/v1", server.Auth())
+	auth := nonAuth.Group("/v1", server.Auth())
 	auth.GET("/users", server.UserIndex)
 	auth.GET("/users/:id", server.UserFind)
 
