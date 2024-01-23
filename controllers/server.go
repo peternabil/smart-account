@@ -33,11 +33,11 @@ func (server *Server) NewRouter() {
 	SetupMetrics(r)
 
 	// auth not required
-	nonAuth := r.Group("/")
-	nonAuth.POST("/signup", server.SignUp)
-	nonAuth.POST("/login", server.Login)
+	nonAuth := r.Group("/api")
+	nonAuth.POST("/auth/signup", server.SignUp)
+	nonAuth.POST("/auth/login", server.Login)
 	// auth required
-	auth := r.Group("/api", server.Auth())
+	auth := r.Group("/v1", server.Auth())
 	auth.GET("/users", server.UserIndex)
 	auth.GET("/users/:id", server.UserFind)
 
