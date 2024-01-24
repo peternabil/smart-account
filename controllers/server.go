@@ -90,7 +90,7 @@ func SetupCORS(router *gin.Engine) {
 
 func SetupMetrics(router *gin.Engine) {
 	m := ginmetrics.GetMonitor()
-	m.SetMetricPath("/metrics")
+	m.SetMetricPath("/smart-account/api/metrics")
 	m.SetSlowTime(10)
 	m.SetDuration([]float64{0.1, 0.3, 1.2, 5, 10})
 	m.Use(router)
