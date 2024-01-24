@@ -15,8 +15,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - smart_wallet
+    network_mode: bridge
+    # networks:
+    #   - smart_wallet
     command: [ "/app/main" ]
 
   postgres:
@@ -32,8 +33,9 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-    networks:
-      - smart_wallet
+    network_mode: bridge
+    # networks:
+    #   - smart_wallet
 
   grafana:
     image: grafana/grafana:latest
@@ -46,16 +48,18 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=false
       # - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_DISABLE_LOGIN_FORM=false
-    networks:
-      - smart_wallet
+    network_mode: bridge
+    # networks:
+    #   - smart_wallet
 
   loki:
     image: grafana/loki:latest
     ports:
       - 3100:3100
     command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - smart_wallet
+    network_mode: bridge
+    # networks:
+    #   - smart_wallet
 
   promtail:
     image: grafana/promtail:latest
@@ -67,8 +71,9 @@ services:
     command: -config.file=/etc/promtail/docker-config.yaml
     depends_on:
       - loki
-    networks:
-      - smart_wallet
+    network_mode: bridge
+    # networks:
+    #   - smart_wallet
 
   nginx:
     image: nginx
@@ -83,11 +88,12 @@ services:
     depends_on:
       - api
       - grafana
-    networks:
-      - smart_wallet
+    network_mode: bridge
+    # networks:
+    #   - smart_wallet
 
-networks:
-  smart_wallet:
-    name: smart_wallet
+    # networks:
+    #   smart_wallet:
+    #     name: smart_wallet
 volumes:
   data-volume:
