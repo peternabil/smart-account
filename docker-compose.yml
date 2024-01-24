@@ -2,8 +2,9 @@ services:
   api:
     image: peternabil/smart_account_api:release
     container_name: api
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
+    network_mode: host
     environment:
       - DB_HOST=postgres
       - DB_SOURCE=postgresql://root:root@postgres:6000/simple_calc?sslmode=disable
