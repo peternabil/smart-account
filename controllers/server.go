@@ -14,11 +14,13 @@ import (
 type Server struct {
 	store  store.Store
 	router *gin.Engine
+	mw     gin.HandlerFunc // Optional middleware for testing
 }
 
-func NewServer(store store.Store) (*Server, error) {
+func NewServer(store store.Store, mw gin.HandlerFunc) (*Server, error) {
 	server := &Server{
 		store: store,
+		mw:    mw,
 	}
 	server.NewRouter()
 	return server, nil
@@ -37,7 +39,13 @@ func (server *Server) NewRouter() {
 	nonAuth.POST("/auth/signup", server.SignUp)
 	nonAuth.POST("/auth/login", server.Login)
 	// auth required
-	auth := nonAuth.Group("/v1", server.Auth())
+	auth := nonAuth.Group("/v1")
+	if server.mw != nil {
+		auth.Use(server.mw)
+	} else {
+		auth.Use(server.Auth())
+	}
+
 	auth.GET("/users", server.UserIndex)
 	auth.GET("/users/:id", server.UserFind)
 

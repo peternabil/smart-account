@@ -37,10 +37,10 @@ func migrate() {
 
 func main() {
 	godotenv.Load()
-	var store intitializers.MainStore
-	server, _ := controllers.NewServer(store)
 	intitializers.LoadDB()
 	migrate()
+	store := intitializers.NewMainStore(intitializers.DB)
+	server, _ := controllers.NewServer(store, nil)
 	server.Start(fmt.Sprintf(
 		"%s:%s",
 		os.Getenv("API_ADDRESS"),

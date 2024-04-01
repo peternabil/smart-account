@@ -3,11 +3,13 @@ package store
 import (
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/models"
 )
 
 type Store interface {
+	ParseToken(c *gin.Context)
 	CreateTransaction(transaction *models.Transaction) error
 	EditTransaction(transaction *models.Transaction) error
 	DeleteTransaction(transaction *models.Transaction) error
@@ -34,10 +36,4 @@ type Store interface {
 	GetTransactionsDateRangeGroupByDay(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error
 	GetHighestSpendingCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error
 	GetHighestSpendingPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error
-	// GetTransactionsDateRangeGroupByCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error
-	// GetTransactionsDateRangeGroupByPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error
-	// GetTransactionsDateRangeGroupByMonth(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error
-	// GetTransactionsDateRangeGroupByCategory(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
-	// GetTransactionsDateRangeGroupByPriority(id uuid.UUID, transactions *[]models.Transaction, startDate, endDate time.Time, negative bool) error
-	// GetHighestTransaction(id uuid.UUID, transactions *models.Transaction, startDate, endDate time.Time, negative bool) error
 }

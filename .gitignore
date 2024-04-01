@@ -1,3 +1,5 @@
 .vscode/
 go-smart-account.json
 smart-account.pem
+*.pem
+*.pub

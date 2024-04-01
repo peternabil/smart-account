@@ -1,15 +1,65 @@
 package intitializers
 
 import (
+	"fmt"
+	"net/http"
+	"os"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/models"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
+// MainStore represents the main store implementation.
 type MainStore struct {
-	name string
+	DB *gorm.DB
+}
+
+// NewMainStore creates a new instance of the main store.
+func NewMainStore(db *gorm.DB) *MainStore {
+	return &MainStore{
+		DB: db,
+	}
+}
+
+func (s MainStore) ParseToken(c *gin.Context) {
+	user := models.User{}
+	if c.Request.Header.Get("Authorization") == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "you must be logged in to perform this request"})
+		c.Abort()
+		return
+	}
+	reqToken := c.Request.Header.Get("Authorization")
+	splitToken := strings.Split(reqToken, "Bearer ")
+	fmt.Println(splitToken)
+	if len(splitToken) == 1 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "you must be logged in to perform this request"})
+		c.Abort()
+		return
+	}
+	reqToken = splitToken[1]
+	claims := &models.Claims{}
+	token, err := jwt.ParseWithClaims(reqToken, claims, func(token *jwt.Token) (any, error) {
+		return []byte(os.Getenv("JWT_SECRET_KEY")), nil
+	})
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "you must be logged in to perform this request"})
+		c.Abort()
+		return
+	}
+	email := claims.Email
+	user.Email = email
+	if usError := s.FindUser(email, &user); usError != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "no user with this email"})
+		c.Abort()
+		return
+	}
+	c.Set("user", user)
 }
 
 func (s MainStore) CreateTransaction(transaction *models.Transaction) error {
