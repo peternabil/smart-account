@@ -6,7 +6,7 @@ import (
 
 func (server Server) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		server.store.ParseToken(c)
+		server.store.ReadToken(c)
 	}
 }
 

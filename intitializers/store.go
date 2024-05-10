@@ -1,7 +1,6 @@
 package intitializers
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -27,7 +26,7 @@ func NewMainStore(db *gorm.DB) *MainStore {
 	}
 }
 
-func (s MainStore) ParseToken(c *gin.Context) {
+func (s MainStore) ReadToken(c *gin.Context) {
 	user := models.User{}
 	if c.Request.Header.Get("Authorization") == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "you must be logged in to perform this request"})
@@ -36,7 +35,6 @@ func (s MainStore) ParseToken(c *gin.Context) {
 	}
 	reqToken := c.Request.Header.Get("Authorization")
 	splitToken := strings.Split(reqToken, "Bearer ")
-	fmt.Println(splitToken)
 	if len(splitToken) == 1 {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "you must be logged in to perform this request"})
 		c.Abort()

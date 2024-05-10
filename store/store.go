@@ -9,7 +9,7 @@ import (
 )
 
 type Store interface {
-	ParseToken(c *gin.Context)
+	ReadToken(c *gin.Context)
 	CreateTransaction(transaction *models.Transaction) error
 	EditTransaction(transaction *models.Transaction) error
 	DeleteTransaction(transaction *models.Transaction) error
