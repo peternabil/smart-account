@@ -3,3 +3,5 @@ go-smart-account.json
 smart-account.pem
 *.pem
 *.pub
+c.out
+coverage.html

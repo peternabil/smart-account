@@ -59,7 +59,25 @@ func (s MainStore) ReadToken(c *gin.Context) {
 	}
 	c.Set("user", user)
 }
+func (s MainStore) CreateToken(user models.User) (string, error) {
+	sampleSecretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
+	claims := &models.Claims{
+		Email: user.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(sampleSecretKey)
+	if err != nil {
+		return "", err
+	}
 
+	return tokenString, nil
+}
+func (s MainStore) GetUserFromToken(c *gin.Context) models.User {
+	return c.MustGet("user").(models.User)
+}
 func (s MainStore) CreateTransaction(transaction *models.Transaction) error {
 	return DB.Create(transaction).Error
 }

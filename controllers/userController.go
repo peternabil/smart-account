@@ -4,13 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
-	"time"
 
 	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/gin-gonic/gin"
 	"github.com/go-passwd/validator"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/peternabil/go-api/models"
 	"golang.org/x/crypto/bcrypt"
@@ -104,36 +101,19 @@ func (server *Server) Login(c *gin.Context) {
 	user := models.User{Email: body.Email}
 	fmt.Println(user)
 	if usError := server.store.FindUser(body.Email, &user); usError != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "no user with this email"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "email or password is incorrect"})
 		return
 	}
 	fmt.Println(user)
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": "email or password is incorrect"})
 		return
 	}
-	token, tokErr := CreateJWTToken(user)
+	token, tokErr := server.store.CreateToken(user)
 	if tokErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": tokErr.Error()})
 		return
 	}
 	c.JSON(200, gin.H{"token": token, "user": user})
-}
-
-func CreateJWTToken(user models.User) (string, error) {
-	sampleSecretKey := []byte(os.Getenv("JWT_SECRET_KEY"))
-	claims := &models.Claims{
-		Email: user.Email,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(sampleSecretKey)
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
 }

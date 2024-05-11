@@ -7,6 +7,12 @@ createdb:
 mock:
 	mockgen -source store/store.go -destination mocks/mocks.go
 
+test:
+	go test -cover -coverprofile=c.out ./...
+
+coverage:
+	go tool cover -html=c.out -o coverage.html
+
 dropdb:
 	docker exec -it postgres16 dropdb simple_bank
 

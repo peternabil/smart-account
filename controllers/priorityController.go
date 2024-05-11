@@ -10,7 +10,7 @@ import (
 
 func (server *Server) PriorityIndex(c *gin.Context) {
 	priorities := []models.Priority{}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	if result := server.store.GetPriorities(user.UID, &priorities); result != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no priorities for this user"})
 		return
@@ -39,7 +39,7 @@ func (server *Server) PriorityCreate(c *gin.Context) {
 		Description string
 		Level       int
 	}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	err := c.BindJSON(&body)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})

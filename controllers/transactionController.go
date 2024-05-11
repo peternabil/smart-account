@@ -10,7 +10,7 @@ import (
 
 func (server *Server) TransactionIndex(c *gin.Context) {
 	transactions := []models.Transaction{}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	page, pageSize := getPaginationArgs(c.Request)
 	var count int64
 	if result := server.store.GetTransactions(user.UID, &transactions, page, pageSize, &count); result != nil {
@@ -57,7 +57,7 @@ func (server *Server) TransactionCreate(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	cat := models.Category{ID: uuid.MustParse(body.Category)}
 	prio := models.Priority{ID: uuid.MustParse(body.Priority)}
 	category := server.store.GetCategory(cat.ID, &cat)

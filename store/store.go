@@ -10,6 +10,8 @@ import (
 
 type Store interface {
 	ReadToken(c *gin.Context)
+	CreateToken(user models.User) (string, error)
+	GetUserFromToken(c *gin.Context) models.User
 	CreateTransaction(transaction *models.Transaction) error
 	EditTransaction(transaction *models.Transaction) error
 	DeleteTransaction(transaction *models.Transaction) error

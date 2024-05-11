@@ -48,7 +48,7 @@ func (server *Server) GetDailyValues(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	spendings := []models.Spending{}
 	server.store.GetTransactionsDateRangeGroupByDay(user.UID, &spendings, startDate, endDate, negative)
 	fmt.Println(spendings)
@@ -67,7 +67,7 @@ func (server *Server) GetHighestCategory(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	spendings := []models.SpendingCategory{}
 	server.store.GetHighestSpendingCategory(user.UID, &spendings, startDate, endDate, negative)
 	c.JSON(200, gin.H{"spending": spendings})
@@ -84,7 +84,7 @@ func (server *Server) GetHighestPriority(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	spendings := []models.SpendingPriority{}
 	server.store.GetHighestSpendingPriority(user.UID, &spendings, startDate, endDate, negative)
 	c.JSON(200, gin.H{"spending": spendings})

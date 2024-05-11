@@ -10,7 +10,7 @@ import (
 
 func (server *Server) CategoryIndex(c *gin.Context) {
 	categories := []models.Category{}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	if result := server.store.GetCategories(user.UID, &categories); result != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no categories for this user"})
 		return
@@ -38,7 +38,7 @@ func (server *Server) CategoryCreate(c *gin.Context) {
 		Name        string
 		Description string
 	}
-	user := c.MustGet("user").(models.User)
+	user := server.store.GetUserFromToken(c)
 	err := c.BindJSON(&body)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})

@@ -65,6 +65,21 @@ func (mr *MockStoreMockRecorder) CreatePriority(priority interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePriority", reflect.TypeOf((*MockStore)(nil).CreatePriority), priority)
 }
 
+// CreateToken mocks base method.
+func (m *MockStore) CreateToken(user models.User) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateToken", user)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateToken indicates an expected call of CreateToken.
+func (mr *MockStoreMockRecorder) CreateToken(user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateToken", reflect.TypeOf((*MockStore)(nil).CreateToken), user)
+}
+
 // CreateTransaction mocks base method.
 func (m *MockStore) CreateTransaction(transaction *models.Transaction) error {
 	m.ctrl.T.Helper()
@@ -317,6 +332,20 @@ func (mr *MockStoreMockRecorder) GetUser(id, user interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockStore)(nil).GetUser), id, user)
 }
 
+// GetUserFromToken mocks base method.
+func (m *MockStore) GetUserFromToken(c *gin.Context) models.User {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserFromToken", c)
+	ret0, _ := ret[0].(models.User)
+	return ret0
+}
+
+// GetUserFromToken indicates an expected call of GetUserFromToken.
+func (mr *MockStoreMockRecorder) GetUserFromToken(c interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserFromToken", reflect.TypeOf((*MockStore)(nil).GetUserFromToken), c)
+}
+
 // GetUsers mocks base method.
 func (m *MockStore) GetUsers(users *[]models.User) error {
 	m.ctrl.T.Helper()
@@ -331,16 +360,16 @@ func (mr *MockStoreMockRecorder) GetUsers(users interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockStore)(nil).GetUsers), users)
 }
 
-// ParseToken mocks base method.
-func (m *MockStore) ParseToken(c *gin.Context) {
+// ReadToken mocks base method.
+func (m *MockStore) ReadToken(c *gin.Context) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ParseToken", c)
+	m.ctrl.Call(m, "ReadToken", c)
 }
 
-// ParseToken indicates an expected call of ParseToken.
-func (mr *MockStoreMockRecorder) ParseToken(c interface{}) *gomock.Call {
+// ReadToken indicates an expected call of ReadToken.
+func (mr *MockStoreMockRecorder) ReadToken(c interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseToken", reflect.TypeOf((*MockStore)(nil).ParseToken), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadToken", reflect.TypeOf((*MockStore)(nil).ReadToken), c)
 }
 
 // SignUp mocks base method.
