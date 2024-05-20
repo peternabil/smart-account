@@ -6,5 +6,9 @@ option go_package = "github.com/peternabil/go-api/pb";
 
 
 message User {
-  string username = 1;
+  string UID = 1;
+  string Email = 2;
+  string FirstName = 3;
+  string LastName = 4;
 }
+
