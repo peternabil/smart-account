@@ -38,11 +38,12 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // CreateCategory mocks base method.
-func (m *MockStore) CreateCategory(category *models.Category) error {
+func (m *MockStore) CreateCategory(category *models.Category) (models.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateCategory", category)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateCategory indicates an expected call of CreateCategory.
@@ -52,11 +53,12 @@ func (mr *MockStoreMockRecorder) CreateCategory(category interface{}) *gomock.Ca
 }
 
 // CreatePriority mocks base method.
-func (m *MockStore) CreatePriority(priority *models.Priority) error {
+func (m *MockStore) CreatePriority(priority *models.Priority) (models.Priority, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatePriority", priority)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Priority)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreatePriority indicates an expected call of CreatePriority.
@@ -81,11 +83,12 @@ func (mr *MockStoreMockRecorder) CreateToken(user interface{}) *gomock.Call {
 }
 
 // CreateTransaction mocks base method.
-func (m *MockStore) CreateTransaction(transaction *models.Transaction) error {
+func (m *MockStore) CreateTransaction(transaction *models.Transaction) (models.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTransaction", transaction)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateTransaction indicates an expected call of CreateTransaction.
@@ -137,11 +140,12 @@ func (mr *MockStoreMockRecorder) DeleteTransaction(transaction interface{}) *gom
 }
 
 // EditCategory mocks base method.
-func (m *MockStore) EditCategory(category *models.Category) error {
+func (m *MockStore) EditCategory(category *models.Category) (models.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditCategory", category)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // EditCategory indicates an expected call of EditCategory.
@@ -151,11 +155,12 @@ func (mr *MockStoreMockRecorder) EditCategory(category interface{}) *gomock.Call
 }
 
 // EditPriority mocks base method.
-func (m *MockStore) EditPriority(priority *models.Priority) error {
+func (m *MockStore) EditPriority(priority *models.Priority) (models.Priority, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditPriority", priority)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Priority)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // EditPriority indicates an expected call of EditPriority.
@@ -165,11 +170,12 @@ func (mr *MockStoreMockRecorder) EditPriority(priority interface{}) *gomock.Call
 }
 
 // EditTransaction mocks base method.
-func (m *MockStore) EditTransaction(transaction *models.Transaction) error {
+func (m *MockStore) EditTransaction(transaction *models.Transaction) (models.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EditTransaction", transaction)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // EditTransaction indicates an expected call of EditTransaction.
@@ -179,39 +185,42 @@ func (mr *MockStoreMockRecorder) EditTransaction(transaction interface{}) *gomoc
 }
 
 // FindUser mocks base method.
-func (m *MockStore) FindUser(email string, user *models.User) error {
+func (m *MockStore) FindUser(email string) (models.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindUser", email, user)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "FindUser", email)
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // FindUser indicates an expected call of FindUser.
-func (mr *MockStoreMockRecorder) FindUser(email, user interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) FindUser(email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUser", reflect.TypeOf((*MockStore)(nil).FindUser), email, user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUser", reflect.TypeOf((*MockStore)(nil).FindUser), email)
 }
 
 // GetCategories mocks base method.
-func (m *MockStore) GetCategories(id uuid.UUID, categories *[]models.Category) error {
+func (m *MockStore) GetCategories(id uuid.UUID) ([]models.Category, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCategories", id, categories)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetCategories", id)
+	ret0, _ := ret[0].([]models.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetCategories indicates an expected call of GetCategories.
-func (mr *MockStoreMockRecorder) GetCategories(id, categories interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetCategories(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategories", reflect.TypeOf((*MockStore)(nil).GetCategories), id, categories)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCategories", reflect.TypeOf((*MockStore)(nil).GetCategories), id)
 }
 
 // GetCategory mocks base method.
-func (m *MockStore) GetCategory(id uuid.UUID, category *models.Category) error {
+func (m *MockStore) GetCategory(id uuid.UUID, category *models.Category) (models.Category, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCategory", id, category)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Category)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetCategory indicates an expected call of GetCategory.
@@ -221,53 +230,57 @@ func (mr *MockStoreMockRecorder) GetCategory(id, category interface{}) *gomock.C
 }
 
 // GetHighestSpendingCategory mocks base method.
-func (m *MockStore) GetHighestSpendingCategory(id uuid.UUID, spendings *[]models.SpendingCategory, startDate, endDate time.Time, negative bool) error {
+func (m *MockStore) GetHighestSpendingCategory(id uuid.UUID, startDate, endDate time.Time, negative bool) ([]models.SpendingCategory, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetHighestSpendingCategory", id, spendings, startDate, endDate, negative)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetHighestSpendingCategory", id, startDate, endDate, negative)
+	ret0, _ := ret[0].([]models.SpendingCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetHighestSpendingCategory indicates an expected call of GetHighestSpendingCategory.
-func (mr *MockStoreMockRecorder) GetHighestSpendingCategory(id, spendings, startDate, endDate, negative interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetHighestSpendingCategory(id, startDate, endDate, negative interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHighestSpendingCategory", reflect.TypeOf((*MockStore)(nil).GetHighestSpendingCategory), id, spendings, startDate, endDate, negative)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHighestSpendingCategory", reflect.TypeOf((*MockStore)(nil).GetHighestSpendingCategory), id, startDate, endDate, negative)
 }
 
 // GetHighestSpendingPriority mocks base method.
-func (m *MockStore) GetHighestSpendingPriority(id uuid.UUID, spendings *[]models.SpendingPriority, startDate, endDate time.Time, negative bool) error {
+func (m *MockStore) GetHighestSpendingPriority(id uuid.UUID, startDate, endDate time.Time, negative bool) ([]models.SpendingPriority, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetHighestSpendingPriority", id, spendings, startDate, endDate, negative)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetHighestSpendingPriority", id, startDate, endDate, negative)
+	ret0, _ := ret[0].([]models.SpendingPriority)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetHighestSpendingPriority indicates an expected call of GetHighestSpendingPriority.
-func (mr *MockStoreMockRecorder) GetHighestSpendingPriority(id, spendings, startDate, endDate, negative interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetHighestSpendingPriority(id, startDate, endDate, negative interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHighestSpendingPriority", reflect.TypeOf((*MockStore)(nil).GetHighestSpendingPriority), id, spendings, startDate, endDate, negative)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHighestSpendingPriority", reflect.TypeOf((*MockStore)(nil).GetHighestSpendingPriority), id, startDate, endDate, negative)
 }
 
 // GetPriorities mocks base method.
-func (m *MockStore) GetPriorities(id uuid.UUID, priorities *[]models.Priority) error {
+func (m *MockStore) GetPriorities(id uuid.UUID) ([]models.Priority, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPriorities", id, priorities)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetPriorities", id)
+	ret0, _ := ret[0].([]models.Priority)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetPriorities indicates an expected call of GetPriorities.
-func (mr *MockStoreMockRecorder) GetPriorities(id, priorities interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetPriorities(id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPriorities", reflect.TypeOf((*MockStore)(nil).GetPriorities), id, priorities)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPriorities", reflect.TypeOf((*MockStore)(nil).GetPriorities), id)
 }
 
 // GetPriority mocks base method.
-func (m *MockStore) GetPriority(id uuid.UUID, priority *models.Priority) error {
+func (m *MockStore) GetPriority(id uuid.UUID, priority *models.Priority) (models.Priority, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPriority", id, priority)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.Priority)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetPriority indicates an expected call of GetPriority.
@@ -277,59 +290,63 @@ func (mr *MockStoreMockRecorder) GetPriority(id, priority interface{}) *gomock.C
 }
 
 // GetTransaction mocks base method.
-func (m *MockStore) GetTransaction(id uuid.UUID, transaction *models.Transaction) error {
+func (m *MockStore) GetTransaction(transaction *models.Transaction) (models.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransaction", id, transaction)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetTransaction", transaction)
+	ret0, _ := ret[0].(models.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetTransaction indicates an expected call of GetTransaction.
-func (mr *MockStoreMockRecorder) GetTransaction(id, transaction interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetTransaction(transaction interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockStore)(nil).GetTransaction), id, transaction)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransaction", reflect.TypeOf((*MockStore)(nil).GetTransaction), transaction)
 }
 
 // GetTransactions mocks base method.
-func (m *MockStore) GetTransactions(id uuid.UUID, transactions *[]models.Transaction, page, pageSize int, count *int64) error {
+func (m *MockStore) GetTransactions(id uuid.UUID, page, pageSize int, count *int64) ([]models.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransactions", id, transactions, page, pageSize, count)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetTransactions", id, page, pageSize, count)
+	ret0, _ := ret[0].([]models.Transaction)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetTransactions indicates an expected call of GetTransactions.
-func (mr *MockStoreMockRecorder) GetTransactions(id, transactions, page, pageSize, count interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetTransactions(id, page, pageSize, count interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactions", reflect.TypeOf((*MockStore)(nil).GetTransactions), id, transactions, page, pageSize, count)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactions", reflect.TypeOf((*MockStore)(nil).GetTransactions), id, page, pageSize, count)
 }
 
 // GetTransactionsDateRangeGroupByDay mocks base method.
-func (m *MockStore) GetTransactionsDateRangeGroupByDay(id uuid.UUID, spendings *[]models.Spending, startDate, endDate time.Time, negative bool) error {
+func (m *MockStore) GetTransactionsDateRangeGroupByDay(id uuid.UUID, startDate, endDate time.Time, negative bool) ([]models.Spending, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransactionsDateRangeGroupByDay", id, spendings, startDate, endDate, negative)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetTransactionsDateRangeGroupByDay", id, startDate, endDate, negative)
+	ret0, _ := ret[0].([]models.Spending)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetTransactionsDateRangeGroupByDay indicates an expected call of GetTransactionsDateRangeGroupByDay.
-func (mr *MockStoreMockRecorder) GetTransactionsDateRangeGroupByDay(id, spendings, startDate, endDate, negative interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetTransactionsDateRangeGroupByDay(id, startDate, endDate, negative interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactionsDateRangeGroupByDay", reflect.TypeOf((*MockStore)(nil).GetTransactionsDateRangeGroupByDay), id, spendings, startDate, endDate, negative)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactionsDateRangeGroupByDay", reflect.TypeOf((*MockStore)(nil).GetTransactionsDateRangeGroupByDay), id, startDate, endDate, negative)
 }
 
 // GetUser mocks base method.
-func (m *MockStore) GetUser(id uuid.UUID, user *models.User) error {
+func (m *MockStore) GetUser(user *models.User) (models.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUser", id, user)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetUser", user)
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetUser indicates an expected call of GetUser.
-func (mr *MockStoreMockRecorder) GetUser(id, user interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetUser(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockStore)(nil).GetUser), id, user)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockStore)(nil).GetUser), user)
 }
 
 // GetUserFromToken mocks base method.
@@ -347,41 +364,61 @@ func (mr *MockStoreMockRecorder) GetUserFromToken(c interface{}) *gomock.Call {
 }
 
 // GetUsers mocks base method.
-func (m *MockStore) GetUsers(users *[]models.User) error {
+func (m *MockStore) GetUsers() ([]models.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUsers", users)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetUsers")
+	ret0, _ := ret[0].([]models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetUsers indicates an expected call of GetUsers.
-func (mr *MockStoreMockRecorder) GetUsers(users interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetUsers() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockStore)(nil).GetUsers), users)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUsers", reflect.TypeOf((*MockStore)(nil).GetUsers))
 }
 
 // ReadToken mocks base method.
-func (m *MockStore) ReadToken(c *gin.Context) {
+func (m *MockStore) ReadToken(tokenStr string) (models.User, error) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "ReadToken", c)
+	ret := m.ctrl.Call(m, "ReadToken", tokenStr)
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // ReadToken indicates an expected call of ReadToken.
-func (mr *MockStoreMockRecorder) ReadToken(c interface{}) *gomock.Call {
+func (mr *MockStoreMockRecorder) ReadToken(tokenStr interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadToken", reflect.TypeOf((*MockStore)(nil).ReadToken), c)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReadToken", reflect.TypeOf((*MockStore)(nil).ReadToken), tokenStr)
 }
 
 // SignUp mocks base method.
-func (m *MockStore) SignUp(user *models.User) error {
+func (m *MockStore) SignUp(user *models.User) (models.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignUp", user)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SignUp indicates an expected call of SignUp.
 func (mr *MockStoreMockRecorder) SignUp(user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockStore)(nil).SignUp), user)
+}
+
+// TotalSpending mocks base method.
+func (m *MockStore) TotalSpending(id uuid.UUID, startDate, endDate time.Time, negative bool) ([]models.SpendingPriority, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TotalSpending", id, startDate, endDate, negative)
+	ret0, _ := ret[0].([]models.SpendingPriority)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// TotalSpending indicates an expected call of TotalSpending.
+func (mr *MockStoreMockRecorder) TotalSpending(id, startDate, endDate, negative interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TotalSpending", reflect.TypeOf((*MockStore)(nil).TotalSpending), id, startDate, endDate, negative)
 }

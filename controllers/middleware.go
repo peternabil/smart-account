@@ -1,12 +1,21 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 func (server Server) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		server.store.ReadToken(c)
+		user, err := server.store.ReadToken(c.Request.Header.Get("Authorization"))
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+			c.Abort()
+			return
+		} else {
+			c.Set("user", user)
+		}
 	}
 }
 

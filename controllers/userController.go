@@ -14,9 +14,8 @@ import (
 )
 
 func (server *Server) UserIndex(c *gin.Context) {
-	users := []models.User{}
-	result := server.store.GetUsers(&users)
-	if result != nil {
+	users, err := server.store.GetUsers()
+	if err != nil {
 		c.Status(400)
 		return
 	}
@@ -32,13 +31,14 @@ func (server *Server) UserFind(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "invalid uuid"})
 		return
 	}
-	user := models.User{}
-	if res := server.store.GetUser(ussId, &user); res != nil {
+	user := models.User{UID: ussId}
+	res, err := server.store.GetUser(&user)
+	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
 	c.JSON(200, gin.H{
-		"user": user,
+		"user": res,
 	})
 }
 
@@ -77,13 +77,13 @@ func (server *Server) SignUp(c *gin.Context) {
 	}
 	fmt.Println(encryptedPass)
 	user := models.User{Email: body.Email, Password: string(encryptedPass), FirstName: body.FirstName, LastName: body.LastName}
-	result := server.store.SignUp(&user)
-	if result != nil {
+	result, err := server.store.SignUp(&user)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 	c.JSON(200, gin.H{
-		"user": user,
+		"user": result,
 	})
 }
 
@@ -98,14 +98,13 @@ func (server *Server) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": reqErr.Error()})
 		return
 	}
-	user := models.User{Email: body.Email}
-	fmt.Println(user)
-	if usError := server.store.FindUser(body.Email, &user); usError != nil {
+	user, err := server.store.FindUser(body.Email)
+	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "email or password is incorrect"})
 		return
 	}
 	fmt.Println(user)
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "email or password is incorrect"})
 		return

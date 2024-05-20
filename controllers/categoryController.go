@@ -9,27 +9,28 @@ import (
 )
 
 func (server *Server) CategoryIndex(c *gin.Context) {
-	categories := []models.Category{}
 	user := server.store.GetUserFromToken(c)
-	if result := server.store.GetCategories(user.UID, &categories); result != nil {
+	cats, err := server.store.GetCategories(user.UID)
+	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "no categories for this user"})
 		return
 	}
 	c.JSON(200, gin.H{
-		"categories": categories,
+		"categories": cats,
 	})
 }
 
 func (server *Server) CategoryFind(c *gin.Context) {
+	user := server.store.GetUserFromToken(c)
 	cId := c.Param("id")
 	category := models.Category{ID: uuid.MustParse(cId)}
-	res := server.store.GetCategory(category.ID, &category)
-	if res != nil {
+	cat, err := server.store.GetCategory(user.UID, &category)
+	if err != nil {
 		c.Status(404)
 		return
 	}
 	c.JSON(200, gin.H{
-		"category": category,
+		"category": cat,
 	})
 }
 
@@ -45,13 +46,13 @@ func (server *Server) CategoryCreate(c *gin.Context) {
 		return
 	}
 	category := models.Category{Name: body.Name, Description: body.Description, UserID: user.UID}
-	result := server.store.CreateCategory(&category)
-	if result != nil {
+	cat, err := server.store.CreateCategory(&category)
+	if err != nil {
 		c.Status(400)
 		return
 	}
 	c.JSON(200, gin.H{
-		"category": category,
+		"category": cat,
 	})
 }
 
@@ -66,15 +67,21 @@ func (server *Server) CategoryEdit(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+	user := server.store.GetUserFromToken(c)
 	cat := models.Category{ID: uuid.MustParse(catId)}
-	res := server.store.GetCategory(cat.ID, &cat)
-	if res != nil {
+	res, err := server.store.GetCategory(user.UID, &cat)
+	if err != nil {
 		c.Status(404)
 		return
 	}
+	cat = res
 	cat.Name = body.Name
 	cat.Description = body.Description
-	server.store.EditCategory(&cat)
+	cat, err = server.store.EditCategory(&cat)
+	if err != nil {
+		c.Status(500)
+		return
+	}
 	c.JSON(200, gin.H{
 		"category": cat,
 	})

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/peternabil/go-api/models"
 )
 
 func setNegative(c *gin.Context, negative *bool) error {
@@ -49,8 +48,11 @@ func (server *Server) GetDailyValues(c *gin.Context) {
 		return
 	}
 	user := server.store.GetUserFromToken(c)
-	spendings := []models.Spending{}
-	server.store.GetTransactionsDateRangeGroupByDay(user.UID, &spendings, startDate, endDate, negative)
+	spendings, err := server.store.GetTransactionsDateRangeGroupByDay(user.UID, startDate, endDate, negative)
+	if err != nil {
+		c.Status(500)
+		return
+	}
 	fmt.Println(spendings)
 	c.JSON(200, gin.H{"spending": spendings})
 }
@@ -68,8 +70,11 @@ func (server *Server) GetHighestCategory(c *gin.Context) {
 		return
 	}
 	user := server.store.GetUserFromToken(c)
-	spendings := []models.SpendingCategory{}
-	server.store.GetHighestSpendingCategory(user.UID, &spendings, startDate, endDate, negative)
+	spendings, err := server.store.GetHighestSpendingCategory(user.UID, startDate, endDate, negative)
+	if err != nil {
+		c.Status(500)
+		return
+	}
 	c.JSON(200, gin.H{"spending": spendings})
 }
 func (server *Server) GetHighestPriority(c *gin.Context) {
@@ -85,7 +90,10 @@ func (server *Server) GetHighestPriority(c *gin.Context) {
 		return
 	}
 	user := server.store.GetUserFromToken(c)
-	spendings := []models.SpendingPriority{}
-	server.store.GetHighestSpendingPriority(user.UID, &spendings, startDate, endDate, negative)
+	spendings, err := server.store.GetHighestSpendingPriority(user.UID, startDate, endDate, negative)
+	if err != nil {
+		c.Status(500)
+		return
+	}
 	c.JSON(200, gin.H{"spending": spendings})
 }

@@ -64,7 +64,7 @@ func TestListTransactions(t *testing.T) {
 				store.EXPECT().
 					GetUserFromToken(gomock.Any()).Times(1).Return(user)
 				store.EXPECT().
-					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(nil)
+					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(nil)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -103,7 +103,7 @@ func TestListTransactions(t *testing.T) {
 				store.EXPECT().
 					GetUserFromToken(gomock.Any()).Times(1).Return(user)
 				store.EXPECT().
-					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(errors.New("error in transactions"))
+					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(errors.New("error in transactions"))
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
