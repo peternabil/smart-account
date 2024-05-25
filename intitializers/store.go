@@ -84,7 +84,7 @@ func (s MainStore) EditTransaction(transaction *models.Transaction) (models.Tran
 func (s MainStore) DeleteTransaction(transaction *models.Transaction) error {
 	return DB.Delete(&transaction).Error
 }
-func (s MainStore) GetTransaction(id uuid.UUID, transaction *models.Transaction) (models.Transaction, error) {
+func (s MainStore) GetTransaction(transaction *models.Transaction) (models.Transaction, error) {
 	err := DB.Preload(clause.Associations).First(&transaction).Error
 	return *transaction, err
 }

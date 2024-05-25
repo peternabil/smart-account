@@ -34,37 +34,37 @@ func TestListTransactions(t *testing.T) {
 		{
 			name: "success",
 			buildStubs: func(store *mock_store.MockStore) {
-				// category := models.Category{
-				// 	ID:          uuid.New(),
-				// 	Name:        "Category A",
-				// 	Description: "A test Category",
-				// 	UserID:      user.UID,
-				// }
-				// priority := models.Priority{
-				// 	ID:          uuid.New(),
-				// 	Name:        "Priority A",
-				// 	Description: "A test Priority",
-				// 	Level:       5,
-				// 	UserID:      user.UID,
-				// }
-				// transactions := []models.Transaction{{
-				// 	ID:          uuid.New(),
-				// 	Title:       "transaction title",
-				// 	CategoryID:  category.ID,
-				// 	Category:    category,
-				// 	Priority:    priority,
-				// 	Amount:      100,
-				// 	Negative:    true,
-				// 	Description: "a test transaction",
-				// 	PriorityID:  priority.ID,
-				// 	UserID:      user.UID,
-				// }}
+				category := models.Category{
+					ID:          uuid.New(),
+					Name:        "Category A",
+					Description: "A test Category",
+					UserID:      user.UID,
+				}
+				priority := models.Priority{
+					ID:          uuid.New(),
+					Name:        "Priority A",
+					Description: "A test Priority",
+					Level:       5,
+					UserID:      user.UID,
+				}
+				transactions := []models.Transaction{{
+					ID:          uuid.New(),
+					Title:       "transaction title",
+					CategoryID:  category.ID,
+					Category:    category,
+					Priority:    priority,
+					Amount:      100,
+					Negative:    true,
+					Description: "a test transaction",
+					PriorityID:  priority.ID,
+					UserID:      user.UID,
+				}}
 				store.EXPECT().
-					ReadToken(gomock.Any()).Times(1).Return()
+					ReadToken(gomock.Any()).Times(1).Return(user, nil)
 				store.EXPECT().
 					GetUserFromToken(gomock.Any()).Times(1).Return(user)
 				store.EXPECT().
-					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(nil)
+					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(transactions, nil)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -73,37 +73,12 @@ func TestListTransactions(t *testing.T) {
 		{
 			name: "error in transactions",
 			buildStubs: func(store *mock_store.MockStore) {
-				// category := models.Category{
-				// 	ID:          uuid.New(),
-				// 	Name:        "Category A",
-				// 	Description: "A test Category",
-				// 	UserID:      user.UID,
-				// }
-				// priority := models.Priority{
-				// 	ID:          uuid.New(),
-				// 	Name:        "Priority A",
-				// 	Description: "A test Priority",
-				// 	Level:       5,
-				// 	UserID:      user.UID,
-				// }
-				// transactions := []models.Transaction{{
-				// 	ID:          uuid.New(),
-				// 	Title:       "transaction title",
-				// 	CategoryID:  category.ID,
-				// 	Category:    category,
-				// 	Priority:    priority,
-				// 	Amount:      100,
-				// 	Negative:    true,
-				// 	Description: "a test transaction",
-				// 	PriorityID:  priority.ID,
-				// 	UserID:      user.UID,
-				// }}
 				store.EXPECT().
-					ReadToken(gomock.Any()).Times(1).Return()
+					ReadToken(gomock.Any()).Times(1).Return(user, nil)
 				store.EXPECT().
 					GetUserFromToken(gomock.Any()).Times(1).Return(user)
 				store.EXPECT().
-					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(errors.New("error in transactions"))
+					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(nil, errors.New("error in transactions"))
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
