@@ -36,8 +36,8 @@ func (server *Server) CategoryFind(c *gin.Context) {
 
 func (server *Server) CategoryCreate(c *gin.Context) {
 	var body struct {
-		Name        string
-		Description string
+		Name        string `json:"Name" binding:"required,min=1"`
+		Description string `json:"Description" binding:"required,min=1"`
 	}
 	user := server.store.GetUserFromToken(c)
 	err := c.BindJSON(&body)
@@ -58,8 +58,8 @@ func (server *Server) CategoryCreate(c *gin.Context) {
 
 func (server *Server) CategoryEdit(c *gin.Context) {
 	var body struct {
-		Name        string
-		Description string
+		Name        string `json:"Name" binding:"min=1"`
+		Description string `json:"Description" binding:"min=1"`
 	}
 	catId := c.Param("id")
 	err := c.BindJSON(&body)

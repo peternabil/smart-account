@@ -273,14 +273,12 @@ func TestTransactionCreate(t *testing.T) {
 	testCases := []struct {
 		name          string
 		body          map[string]interface{}
-		transactionId string
 		buildStubs    func(store *mock_store.MockStore)
 		checkResponse func(recorder *httptest.ResponseRecorder)
 	}{
 		{
-			name:          "OK",
-			body:          validBody,
-			transactionId: transactionID.String(),
+			name: "OK",
+			body: validBody,
 			buildStubs: func(store *mock_store.MockStore) {
 				store.EXPECT().
 					ReadToken(gomock.Any()).Times(1).Return(user, nil)
@@ -298,9 +296,8 @@ func TestTransactionCreate(t *testing.T) {
 			},
 		},
 		{
-			name:          "CategoryNotFound",
-			body:          validBody,
-			transactionId: transactionID.String(),
+			name: "CategoryNotFound",
+			body: validBody,
 			buildStubs: func(store *mock_store.MockStore) {
 				store.EXPECT().
 					ReadToken(gomock.Any()).Times(1).Return(user, nil)
@@ -315,9 +312,8 @@ func TestTransactionCreate(t *testing.T) {
 			},
 		},
 		{
-			name:          "PriorityNotFound",
-			body:          validBody,
-			transactionId: transactionID.String(),
+			name: "PriorityNotFound",
+			body: validBody,
 			buildStubs: func(store *mock_store.MockStore) {
 				store.EXPECT().
 					ReadToken(gomock.Any()).Times(1).Return(user, nil)
@@ -334,9 +330,8 @@ func TestTransactionCreate(t *testing.T) {
 			},
 		},
 		{
-			name:          "InvalidRequestBody",
-			body:          inValidBody,
-			transactionId: transactionID.String(),
+			name: "InvalidRequestBody",
+			body: inValidBody,
 			buildStubs: func(store *mock_store.MockStore) {
 				store.EXPECT().
 					ReadToken(gomock.Any()).Times(1).Return(user, nil)
@@ -346,9 +341,8 @@ func TestTransactionCreate(t *testing.T) {
 			},
 		},
 		{
-			name:          "InternalServerError",
-			body:          validBody,
-			transactionId: transactionID.String(),
+			name: "InternalServerError",
+			body: validBody,
 			buildStubs: func(store *mock_store.MockStore) {
 				store.EXPECT().
 					ReadToken(gomock.Any()).Times(1).Return(user, nil)
@@ -388,7 +382,7 @@ func TestTransactionCreate(t *testing.T) {
 				bodyReader = strings.NewReader("")
 			}
 
-			url := fmt.Sprintf("/smart-account/api/v1/transaction/%s", tt.transactionId)
+			url := "/smart-account/api/v1/transaction"
 			request, err := http.NewRequest(http.MethodPost, url, bodyReader)
 			require.NoError(t, err)
 			server.router.ServeHTTP(recorder, request)

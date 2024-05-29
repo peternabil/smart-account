@@ -59,7 +59,7 @@ func (server *Server) NewRouter() {
 	auth.GET("/category/:id", server.CategoryFind)
 	auth.POST("/category", server.CategoryCreate)
 	auth.PUT("/category/:id", server.CategoryEdit)
-	auth.DELETE("/category", server.CategoryDelete)
+	auth.DELETE("/category/:id", server.CategoryDelete)
 
 	auth.GET("/priority", server.PriorityIndex)
 	auth.GET("/priority/:id", server.PriorityFind)
