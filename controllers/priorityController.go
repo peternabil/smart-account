@@ -36,9 +36,9 @@ func (server *Server) PriorityFind(c *gin.Context) {
 
 func (server *Server) PriorityCreate(c *gin.Context) {
 	var body struct {
-		Name        string
-		Description string
-		Level       int
+		Name        string `json:"Name" binding:"required,min=1"`
+		Description string `json:"Description" binding:"required,min=1"`
+		Level       int    `json:"Level" binding:"required,min=1,max=10"`
 	}
 	user := server.store.GetUserFromToken(c)
 	err := c.BindJSON(&body)
@@ -59,9 +59,9 @@ func (server *Server) PriorityCreate(c *gin.Context) {
 
 func (server *Server) PriorityEdit(c *gin.Context) {
 	var body struct {
-		Name        string
-		Description string
-		Level       int
+		Name        string `json:"Name" binding:"required,min=1"`
+		Description string `json:"Description" binding:"required,min=1"`
+		Level       int    `json:"Level" binding:"required,min=1,max=10"`
 	}
 	pId := c.Param("id")
 	err := c.BindJSON(&body)

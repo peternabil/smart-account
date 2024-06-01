@@ -204,9 +204,56 @@ func TestSignUp(t *testing.T) {
 			},
 		},
 		{
+			name: "server error",
+			body: gin.H{
+				"Email":     user.Email,
+				"FirstName": user.FirstName,
+				"LastName":  user.LastName,
+				"Password":  user.Password,
+			},
+			buildStubs: func(store *mock_store.MockStore) {
+				store.EXPECT().
+					SignUp(gomock.Any()).Times(1).Return(user, errors.New("server error"))
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				t.Log(recorder.Body)
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "wrong params",
+			body: gin.H{
+				"Email":     "u@gmail.com",
+				"FirstName": "Te",
+				"Password":  "Pass",
+			},
+			buildStubs: func(store *mock_store.MockStore) {
+				// store.EXPECT().
+				// 	SignUp(gomock.Any()).Times(1).Return(user, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				t.Log(recorder.Body)
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name: "fake email",
+			body: gin.H{
+				"Email":     "peter@test.com",
+				"FirstName": user.FirstName,
+				"LastName":  user.LastName,
+				"Password":  user.Password,
+			},
+			buildStubs: func(store *mock_store.MockStore) {
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
 			name: "invalid email",
 			body: gin.H{
-				"Email":     "invalid-email",
+				"Email":     "peter.com",
 				"FirstName": user.FirstName,
 				"LastName":  user.LastName,
 				"Password":  user.Password,
@@ -223,7 +270,7 @@ func TestSignUp(t *testing.T) {
 				"Email":     user.Email,
 				"FirstName": user.FirstName,
 				"LastName":  user.LastName,
-				"Password":  "short",
+				"Password":  "easypasswordtoguess",
 			},
 			buildStubs: func(store *mock_store.MockStore) {
 				// store.EXPECT().
@@ -289,6 +336,17 @@ func TestLogin(t *testing.T) {
 			},
 		},
 		{
+			name: "wrong input",
+			body: gin.H{
+				"Password": password,
+			},
+			buildStubs: func(store *mock_store.MockStore) {
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
 			name: "incorrect password",
 			body: gin.H{
 				"Email":    user.Email,
@@ -314,6 +372,22 @@ func TestLogin(t *testing.T) {
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+		{
+			name: "error in token create",
+			body: gin.H{
+				"Email":    user.Email,
+				"Password": password,
+			},
+			buildStubs: func(store *mock_store.MockStore) {
+				store.EXPECT().
+					FindUser(gomock.Any()).Times(1).Return(user, nil)
+				store.EXPECT().
+					CreateToken(gomock.Any()).Times(1).Return("token", errors.New("error in token creation"))
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
 	}

@@ -44,10 +44,10 @@ func (server *Server) UserFind(c *gin.Context) {
 
 func (server *Server) SignUp(c *gin.Context) {
 	var body struct {
-		Email     string
-		FirstName string
-		LastName  string
-		Password  string
+		Email     string `json:"Email" binding:"required,min=5"`
+		FirstName string `json:"FirstName" binding:"required,min=3"`
+		LastName  string `json:"LastName" binding:"required,min=3"`
+		Password  string `json:"Password" binding:"required,min=6"`
 	}
 	reqErr := c.BindJSON(&body)
 	if reqErr != nil {
@@ -89,8 +89,8 @@ func (server *Server) SignUp(c *gin.Context) {
 
 func (server *Server) Login(c *gin.Context) {
 	var body struct {
-		Email    string
-		Password string
+		Email    string `json:"Email" binding:"required,min=5"`
+		Password string `json:"Password" binding:"required,min=6"`
 	}
 	reqErr := c.BindJSON(&body)
 	fmt.Println(body)
