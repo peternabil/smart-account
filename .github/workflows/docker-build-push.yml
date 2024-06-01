@@ -10,16 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test code
-        uses: shoukoo/golang-pipeline@0.2.0
-  
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.19"
+      - name: Install dependencies
+        run: go get .
+      - name: Build
+        run: go build -v ./...
+      - name: Test with the Go CLI
+        run: go test
+
   build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-  
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
