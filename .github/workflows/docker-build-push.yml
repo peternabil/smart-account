@@ -6,13 +6,20 @@ on:
       - staging
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test code
+        uses: shoukoo/golang-pipeline@0.2.0
+  
   build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
+  
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
