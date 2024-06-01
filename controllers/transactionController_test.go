@@ -109,6 +109,125 @@ func TestListTransactions(t *testing.T) {
 	}
 }
 
+func TestListTransactionsPagination(t *testing.T) {
+	password := "Password123"
+	encryptedPass, _ := bcrypt.GenerateFromPassword([]byte(password), 10)
+
+	user := models.User{
+		UID:       uuid.New(),
+		Email:     "user@test.com",
+		FirstName: "test",
+		LastName:  "user",
+		Password:  string(encryptedPass),
+	}
+	testCases := []struct {
+		name          string
+		params        string
+		buildStubs    func(store *mock_store.MockStore)
+		checkResponse func(recoder *httptest.ResponseRecorder)
+	}{
+		{
+			name:   "negative page number and large page size",
+			params: "?page=-1&page_size=101",
+			buildStubs: func(store *mock_store.MockStore) {
+				category := models.Category{
+					ID:          uuid.New(),
+					Name:        "Category A",
+					Description: "A test Category",
+					UserID:      user.UID,
+				}
+				priority := models.Priority{
+					ID:          uuid.New(),
+					Name:        "Priority A",
+					Description: "A test Priority",
+					Level:       5,
+					UserID:      user.UID,
+				}
+				transactions := []models.Transaction{{
+					ID:          uuid.New(),
+					Title:       "transaction title",
+					CategoryID:  category.ID,
+					Category:    category,
+					Priority:    priority,
+					Amount:      100,
+					Negative:    true,
+					Description: "a test transaction",
+					PriorityID:  priority.ID,
+					UserID:      user.UID,
+				}}
+				store.EXPECT().
+					ReadToken(gomock.Any()).Times(1).Return(user, nil)
+				store.EXPECT().
+					GetUserFromToken(gomock.Any()).Times(1).Return(user)
+				store.EXPECT().
+					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(transactions, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+		{
+			name:   "negative page number and negative page size",
+			params: "?page=-1&page_size=-1",
+			buildStubs: func(store *mock_store.MockStore) {
+				category := models.Category{
+					ID:          uuid.New(),
+					Name:        "Category A",
+					Description: "A test Category",
+					UserID:      user.UID,
+				}
+				priority := models.Priority{
+					ID:          uuid.New(),
+					Name:        "Priority A",
+					Description: "A test Priority",
+					Level:       5,
+					UserID:      user.UID,
+				}
+				transactions := []models.Transaction{{
+					ID:          uuid.New(),
+					Title:       "transaction title",
+					CategoryID:  category.ID,
+					Category:    category,
+					Priority:    priority,
+					Amount:      100,
+					Negative:    true,
+					Description: "a test transaction",
+					PriorityID:  priority.ID,
+					UserID:      user.UID,
+				}}
+				store.EXPECT().
+					ReadToken(gomock.Any()).Times(1).Return(user, nil)
+				store.EXPECT().
+					GetUserFromToken(gomock.Any()).Times(1).Return(user)
+				store.EXPECT().
+					GetTransactions(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(transactions, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			mockCtrl := gomock.NewController(t)
+			defer mockCtrl.Finish()
+
+			mockStore := mock_store.NewMockStore(mockCtrl)
+			tt.buildStubs(mockStore)
+
+			server, _ := NewServer(mockStore, nil)
+			recorder := httptest.NewRecorder()
+
+			reader := strings.NewReader("")
+
+			request, err := http.NewRequest("GET", fmt.Sprintf("/smart-account/api/v1/transaction%s", tt.params), reader)
+			require.NoError(t, err)
+			server.router.ServeHTTP(recorder, request)
+			tt.checkResponse(recorder)
+		})
+	}
+}
+
 func TestGetTransaction(t *testing.T) {
 	password := "Password123"
 	encryptedPass, _ := bcrypt.GenerateFromPassword([]byte(password), 10)

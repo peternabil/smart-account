@@ -4,8 +4,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 func getPaginationArgs(r *http.Request) (int, int) {
@@ -35,14 +33,7 @@ func getDates(r *http.Request) (time.Time, time.Time, error, error) {
 	endDatestr := q.Get("end_date")
 	endDate, sError := time.Parse("2006-01-02T15:04:05Z", endDatestr)
 	if sError != nil {
-		return time.Now(), time.Now(), sError, nil
+		return time.Now(), time.Now(), nil, sError
 	}
 	return startDate, endDate, nil, nil
-}
-
-func Paginate(page int, pageSize int) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		offset := (page - 1) * pageSize
-		return db.Offset(offset).Limit(pageSize)
-	}
 }
